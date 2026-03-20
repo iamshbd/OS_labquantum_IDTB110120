@@ -1,0 +1,23 @@
+nano ~/observations.txt
+```
+
+Type this in (fill in your actual numbers from your bot_swarm runs):
+```
+TOC-TOU Race Condition Experiment - Observations
+=================================================
+Student ID: IDTB110120/BD
+Date: 2025-03-20
+
+Run 1: inventory.txt final value = ___
+Run 2: inventory.txt final value = ___
+Run 3: inventory.txt final value = ___
+Run 4: inventory.txt final value = ___
+Run 5: inventory.txt final value = ___
+
+Explanation:
+The inventory value differs after every run because the Linux OS kernel
+schedules 50 concurrent background processes in a non-deterministic order.
+Between the moment a bot reads inventory.txt (check) and writes the
+decremented value back (use), other bots may have already overwritten the
+file with their own stale reads. This is the TOC-TOU race condition and
+the outcome changes every run depending on OS process scheduling.
