@@ -1,0 +1,23 @@
+#!/bin/bash
+
+read -rp "Enter the name for the drop zone folder: " FOLDER_NAME
+
+if [ -z "$FOLDER_NAME" ]; then
+    echo "Error: Folder name cannot be empty."
+    exit 1
+fi
+
+TARGET_DIR="$HOME/$FOLDER_NAME"
+
+if [ -d "$TARGET_DIR" ]; then
+    echo "Error: Directory '$TARGET_DIR' already exists."
+    exit 1
+fi
+
+mkdir "$TARGET_DIR"
+chmod o+wx "$TARGET_DIR"  
+chmod +t "$TARGET_DIR" 
+
+echo "Drop zone created: $TARGET_DIR"
+echo "Permissions:"
+ls -ld "$TARGET_DIR"

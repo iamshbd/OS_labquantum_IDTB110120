@@ -1,0 +1,11 @@
+#!/bin/bash
+
+TARGET="/home/g11-doung-seyhakbondeth/public_api/buy_widget"
+
+for i in {1..50}; do
+    $TARGET "Bot_$i" 2 &
+done
+
+wait
+echo "Bot swarm complete."
+echo "Final inventory: $(cat /home/g11-doung-seyhakbondeth/public_api/inventory.txt)"

@@ -1,0 +1,43 @@
+#!/bin/bash
+
+STUDENT_ID="IDTB110120/BD"
+SCRIPT_DIR="/home/g11-doung-seyhakbondeth/public_api" 
+INVENTORY_FILE="$SCRIPT_DIR/inventory.txt"              
+LOG_FILE="$SCRIPT_DIR/sales.log"                       
+LOCK_FILE="$SCRIPT_DIR/inventory.lock" 
+
+# --- Input Validation ---
+if [ $# -ne 2 ]; then
+    echo "Usage: buy_widget <username> <quantity>"
+    exit 1
+fi
+
+USERNAME=$1
+QUANTITY=$2
+
+if ! [[ "$QUANTITY" =~ ^[1-9][0-9]*$ ]]; then
+    echo "Error: Quantity must be a positive integer."
+    exit 1
+fi
+
+# --- Logging Function ---
+log_transaction() {
+    echo "[$STUDENT_ID] [SUCCESS] $USERNAME bought $QUANTITY widgets." >> "$LOG_FILE"
+}
+
+# --- CRITICAL SECTION (Mutex protected) ---
+(
+    flock -x 200  # Acquire exclusive lock
+
+    CURRENT=$(cat "$INVENTORY_FILE")
+
+    if [ "$QUANTITY" -le "$CURRENT" ]; then
+        NEW_INVENTORY=$(( CURRENT - QUANTITY ))
+        echo "$NEW_INVENTORY" > "$INVENTORY_FILE"
+        log_transaction
+        echo "Success: $USERNAME bought $QUANTITY widget(s). Remaining: $NEW_INVENTORY"
+    else
+        echo "Transaction Failed: Not enough inventory!"
+    fi
+
+) 200>"$LOCK_FILE"
